@@ -876,7 +876,7 @@ class AlectoV1TemperaturePacket(Packet):
 class AlectoV1WindPacket(Packet):
     # {"time" : "2020-03-12 17:10:00", "protocol" : 16, "model" : "AlectoV1-Wind", "id" : 100, "channel" : 1, "battery_ok" : 1, "wind_avg_m_s" : 2.400, "wind_max_m_s" : 4.200, "wind_dir_deg" : 270, "mic" : "CHECKSUM", "mod" : "ASK", "freq" : 433.995, "rssi" : -11.530, "snr" : 12.354, "noise" : -23.883}
 
-    IDENTIFIER = "AlectoV1 Wind Sensor"
+    IDENTIFIER = "AlectoV1-Wind"
 
     @staticmethod
     def parse_json(obj):
