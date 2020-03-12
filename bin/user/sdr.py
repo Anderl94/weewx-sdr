@@ -867,7 +867,7 @@ class AlectoV1TemperaturePacket(Packet):
         station_id = obj.get('id')
         pkt['temperature'] = Packet.get_float(obj, 'temperature_C')
         pkt['humidity'] = Packet.get_float(obj, 'humidity')
-        pkt['battery'] = 0 if obj.get('battery_ok') == 'OK' else 1
+        pkt['battery'] = 0 if obj.get('battery_ok') == '1' else 1
         pkt['channel'] = obj.get('channel')
         pkt = Packet.add_identifiers(pkt, station_id, AlectoV1TemperaturePacket.__name__)
         return pkt
@@ -887,7 +887,7 @@ class AlectoV1WindPacket(Packet):
         pkt['wind_speed'] = Packet.get_float(obj, 'wind_avg_m_s')
         pkt['wind_gust'] = Packet.get_float(obj, 'wind_max_m_s')
         pkt['wind_dir'] = Packet.get_int(obj, 'wind_dir_deg')
-        pkt['battery'] = 0 if obj.get('battery_ok') == 'OK' else 1
+        pkt['battery'] = 0 if obj.get('battery_ok') == '1' else 1
         pkt['channel'] = obj.get('channel')
         pkt = Packet.add_identifiers(pkt, station_id, AlectoV1WindPacket.__name__)
         return pkt
@@ -905,7 +905,7 @@ class AlectoV1RainPacket(Packet):
         pkt['usUnits'] = weewx.METRICWX # FIXME: units have not been verified
         station_id = obj.get('id')
         pkt['rain_total'] = Packet.get_float(obj, 'rain_mm')
-        pkt['battery'] = 0 if obj.get('battery_ok') == 'OK' else 1
+        pkt['battery'] = 0 if obj.get('battery_ok') == '1' else 1
         pkt['channel'] = obj.get('channel')
         pkt = Packet.add_identifiers(pkt, station_id, AlectoV1RainPacket.__name__)
         return pkt
