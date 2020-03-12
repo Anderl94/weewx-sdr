@@ -2193,14 +2193,14 @@ class OSBTHGN129Packet(Packet):
     # Humidity:        50 %
     # Pressure:        959.36 mPa
 
-    IDENTIFIER = "BTHGN129"
+    IDENTIFIER = "Oregon-BTHGN129"
     PARSEINFO = {
         'House Code': ['house_code', None, lambda x: int(x)],
         'Channel': ['channel', None, lambda x: int(x)],
-        'Battery': ['battery', None, lambda x: 0 if x == 'OK' else 1],
-        'Celcius': ['temperature', re.compile('([\d.-]+) C'), lambda x: float(x)],
+        'Battery': ['battery_ok', None, lambda x: 0 if x == 'OK' else 1],
+        'Celcius': ['temperature_C', re.compile('([\d.-]+) C'), lambda x: float(x)],
         'Humidity': ['humidity', re.compile('([\d.]+) %'), lambda x: float(x)],
-        'Pressure': ['pressure', re.compile('([\d.]+) mPa'), lambda x: float(x)]}
+        'Pressure': ['pressure_hPa', re.compile('([\d.]+) mPa'), lambda x: float(x)]}
 
     @staticmethod
     def parse_text(ts, payload, lines):
@@ -2219,7 +2219,7 @@ class OSBTHGN129Packet(Packet):
         pkt['usUnits'] = weewx.METRIC
         pkt['house_code'] = obj.get('id')
         pkt['channel'] = obj.get('channel')
-        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
+        pkt['battery'] = 0 if obj.get('battery_ok') == '1' else 1
         pkt['temperature'] = Packet.get_float(obj, 'temperature_C')
         pkt['humidity'] = Packet.get_float(obj, 'humidity')
         pkt['pressure'] = Packet.get_float(obj, 'pressure_hPa')
