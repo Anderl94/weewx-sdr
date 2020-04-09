@@ -703,6 +703,32 @@ class AcuriteRain899Packet(Packet):
             pkt['rain_total'] = Packet.get_float(obj, 'rain_mm') / 25.4
         return Acurite.insert_ids(pkt, AcuriteRain899Packet.__name__)
 
+class Inovalleykw9015bPacket(Packet):
+    # Sample data:
+# {"time" : "2020-04-04 11:45:20", "protocol" : 37, "model" : "Inovalley-kw9015b", "id" : 11, "temperature_C" : 21.700, "rain" : 19, "mod" : "ASK", "freq" : 433.879, "rssi" : -8.139, "snr" : 16.281, "noise" : -24.420}
+
+
+    IDENTIFIER = "Inovalley-kw9015b"
+
+    @staticmethod
+    def parse_json(obj):
+        pkt = dict()
+        pkt['usUnits'] = weewx.US
+        pkt['dateTime'] = Packet.parse_time(obj.get('time'))
+        pkt['model'] = obj.get('model')
+        pkt['mod'] = obj.get('mod') # apparently mod = ASK
+        pkt['freq'] = Packet.get_float(obj, 'freq')
+        pkt['rssi'] = Packet.get_float(obj, 'rssi')
+        pkt['snr'] = Packet.get_float(obj, 'snr')
+        pkt['noise'] = Packet.get_float(obj, 'noise')
+        pkt['hardware_id'] = "%04x" % obj.get('id', 0)
+        pkt['temperature'] = Packet.get_float(obj, 'temperature_C')
+        if 'rain_mm' in obj:
+            pkt['rain_total'] = Packet.get_float(obj, 'rain_mm') * 0.0759
+        else:
+            pkt['rain_total'] = Packet.get_float(obj, 'rain') * 0.0759
+        return Acurite.insert_ids(pkt, Inovalleykw9015bPacket.__name__)
+
 
 class Acurite986Packet(Packet):
     # 2016-10-31 15:24:29 Acurite 986 sensor 0x2c87 - 2F: 16.7 C 62 F
@@ -2075,7 +2101,7 @@ class OSUVR128Packet(Packet):
     # UV Index: 0
     # Battery: OK
 
-    IDENTIFIER = "Oregon Scientific UVR128"
+    IDENTIFIER = "Oregon-UVR128"
     PARSEINFO = {
         'House Code': ['house_code', None, lambda x: int(x)],
         'UV Index': ['uv_index', re.compile('([\d.-]+) C'), lambda x: float(x)],
@@ -2089,8 +2115,7 @@ class OSUVR128Packet(Packet):
         pkt.update(Packet.parse_lines(lines, OSUVR128Packet.PARSEINFO))
         return OS.insert_ids(pkt, OSUVR128Packet.__name__)
 
-    # {"time" : "2019-11-05 07:07:07", "model" : "Oregon Scientific UVR128", "id" : 116, "uv" : 0, "battery" : "OK"}
-    # {"time" : "2019-11-19 06:44:53", "model" : "Oregon Scientific UVR128", "id" : 116, "uv" : 0, "battery" : "OK"}
+    #{"time" : "2020-04-09 13:52:24", "model" : "Oregon-UVR128", "id" : 216, "uv" : 4, "battery_ok" : 1}
 
     @staticmethod
     def parse_json(obj):
@@ -2099,7 +2124,7 @@ class OSUVR128Packet(Packet):
         pkt['usUnits'] = weewx.METRIC
         pkt['house_code'] = obj.get('id')
         pkt['uv_index'] = Packet.get_float(obj, 'uv')
-        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
+        pkt['battery'] = 0 if obj.get('battery_ok') == '1' else 1
         return OS.insert_ids(pkt, OSUVR128Packet.__name__)
 
 
@@ -2517,6 +2542,7 @@ class PacketFactory(object):
         HidekiWindPacket,
         HidekiRainPacket,
         HolmanWS5029Packet,
+		Inovalleykw9015bPacket,
         LaCrosseWSPacket,
         LaCrosseTX141THBv2Packet,
         LaCrosseTXPacket,
